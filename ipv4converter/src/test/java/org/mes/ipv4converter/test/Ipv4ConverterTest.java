@@ -99,11 +99,34 @@ public class Ipv4ConverterTest {
 		char position = 'd';
 		long ipNumber = 255;
 		long result = 255;
-		assertTrue("getIpBlock('"+ position + "',\"" + ipNumber + "\") should be equal to " + result, Ipv4Converter.getIpBlock(position, ipNumber) == result);
+		assertTrue("getIpBlock('" + position + "',\"" + ipNumber + "\") should be equal to " + result,
+				Ipv4Converter.getIpBlock(position, ipNumber) == result);
 		position = 'a';
 		ipNumber = 4278190080L;
 		result = 255;
-		assertTrue("getIpBlock('"+ position + "',\"" + ipNumber + "\") should be equal to " + result, Ipv4Converter.getIpBlock(position, ipNumber) == result);
+		assertTrue("getIpBlock('" + position + "',\"" + ipNumber + "\") should be equal to " + result,
+				Ipv4Converter.getIpBlock(position, ipNumber) == result);
+	}
+
+	@Test
+	public void generateHashMap() throws Ipv4ConverterException {
+		long initialIpNumber = 20_000_000;
+		long endIpNumber = 20_000_010;
+		assertTrue("generateHashMap('" + initialIpNumber + "',\"" + endIpNumber + "\") should be equal to " + 10,
+				Ipv4Converter.generateHashMap(initialIpNumber, endIpNumber).size() == 10);
+		assertTrue("generateHashMap('" + initialIpNumber + "',\"" + endIpNumber + "\") should contain the value",
+				Ipv4Converter.generateHashMap(initialIpNumber, endIpNumber).get(initialIpNumber)
+						.contentEquals(Ipv4Converter.getIpString(initialIpNumber)));
+	}
+
+	@Test
+	public void generateHashMap2() throws Ipv4ConverterException {
+		String initialIpString = "100.100.0.0";
+		String endIpString = "100.100.0.10";
+		assertTrue("generateHashMap('" + initialIpString + "',\"" + endIpString + "\") should be equal to " + 10,
+				Ipv4Converter.generateHashMap(initialIpString, endIpString).size() == 10);
+		assertTrue("generateHashMap('" + initialIpString + "',\"" + endIpString + "\") should contain the value",
+				Ipv4Converter.generateHashMap(initialIpString, endIpString).containsKey(Ipv4Converter.getIpNumber(endIpString)));
 	}
 
 	@Test

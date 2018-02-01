@@ -1,5 +1,10 @@
 package org.mes.ipv4converter;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Converts an ipv4 string (blockA.blockB.blockC.blockD) to an unique ipv4 long value and viceversa.
  * Max value = 256*256*256*256 - 1 (2^32 -1) Note that max int primitive is 2^31 - 1
@@ -58,10 +63,7 @@ public final class Ipv4Converter {
 	 * Example: getIpBlock('d',255) returns 255 while getIpBlock('a',4278190080) returns 255
 	 */
 	public static long getIpBlock(char position, long ipNumber) throws Ipv4ConverterException {
-		if (ipNumber < 0 || ipNumber > (blockA - 1)) {
-			throw new Ipv4ConverterException(
-					String.format("getIpBlock(%c,%d) is not in the range 1:%d", position, ipNumber, (blockA - 1)));
-		}
+		checkBlockValue(ipNumber, position);
 		switch (position) {
 		case 'a':
 		case 'A':
@@ -96,32 +98,51 @@ public final class Ipv4Converter {
 		case 'a':
 		case 'A':
 			value = Long.valueOf(ipStringSplitted[0]);
-			Ipv4Converter.checkValue(value, position, ipString, blockD);
+			Ipv4Converter.checkBlockValue(value, position, ipString, blockD);
 			return (value * blockB);
 		case 'b':
 		case 'B':
 			value = Long.valueOf(ipStringSplitted[1]);
-			Ipv4Converter.checkValue(value, position, ipString, blockD);
+			Ipv4Converter.checkBlockValue(value, position, ipString, blockD);
 			return (value * blockC);
 		case 'c':
 		case 'C':
 			value = Long.valueOf(ipStringSplitted[2]);
-			Ipv4Converter.checkValue(value, position, ipString, blockD);
+			Ipv4Converter.checkBlockValue(value, position, ipString, blockD);
 			return (value * blockD);
 		case 'd':
 		case 'D':
 			value = Long.valueOf(ipStringSplitted[3]);
-			Ipv4Converter.checkValue(value, position, ipString, blockD);
+			Ipv4Converter.checkBlockValue(value, position, ipString, blockD);
 			return value;
 		default:
 			throw new Ipv4ConverterException(String.format("getIpBlock(%c,%s) wrong position:%c", position, ipString, position));
 		}
 	};
 	
-	public static void checkValue(long value, char position, String ipString, long max) throws Ipv4ConverterException {
+	public static void checkBlockValue(long value, char position, String ipString, long max) throws Ipv4ConverterException {
 		if (value >= blockD)
 			throw new Ipv4ConverterException(String.format("getIpBlock(%c,%d) block value %d greater than %c", position,
 					ipString, value, blockD));
+	};
+	
+	public static void checkBlockValue(long ipNumber, char position) throws Ipv4ConverterException {
+		if (ipNumber < 0 || ipNumber > (blockA - 1)) {
+			throw new Ipv4ConverterException(
+					String.format("getIpBlock(%c,%d) is not in the range 1:%d", position, ipNumber, (blockA - 1)));
+		}
+	};
+	
+	public static Map<Long, String> generateHashMap(long initialIpNumber, long endIpNumber) throws Ipv4ConverterException {
+		Map<Long, String> map = new ConcurrentHashMap<>();
+		for (Long x = initialIpNumber; x < (initialIpNumber + endIpNumber); x++) {
+			map.put(x, Ipv4Converter.getIpString(x));
+		}
+		return map;
+	};
+	
+	public static Map<Long, String> generateHashMap(String initialIpString, String endIpString) throws Ipv4ConverterException {
+		return Ipv4Converter.generateHashMap(Ipv4Converter.getIpNumber(initialIpString), Ipv4Converter.getIpNumber(endIpString));
 	};
 
 }
