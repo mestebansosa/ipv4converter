@@ -132,7 +132,14 @@ public final class Ipv4Converter {
 					String.format("getIpBlock(%c,%d) is not in the range 1:%d", position, ipNumber, (blockA - 1)));
 		}
 	};
-	
+
+	/**
+	 * 
+	 * @param initialIpNumber
+	 * @param endIpNumber
+	 * @return a HashMap with keys numbers from initialIpNumber to endIpNumber and its string values
+	 * @throws Ipv4ConverterException
+	 */
 	public static Map<Long, String> generateHashMap(long initialIpNumber, long endIpNumber) throws Ipv4ConverterException {
 		Map<Long, String> map = new ConcurrentHashMap<>();
 		for (Long x = initialIpNumber; x < (initialIpNumber + endIpNumber); x++) {
@@ -141,6 +148,13 @@ public final class Ipv4Converter {
 		return map;
 	};
 	
+	/**
+	 * 
+	 * @param initialIpString
+	 * @param endIpString
+	 * @return a HashMap with keys numbers from initialIpNumber to endIpNumber and its string values
+	 * @throws Ipv4ConverterException
+	 */
 	public static Map<Long, String> generateHashMap(String initialIpString, String endIpString) throws Ipv4ConverterException {
 		return Ipv4Converter.generateHashMap(Ipv4Converter.getIpNumber(initialIpString), Ipv4Converter.getIpNumber(endIpString));
 	};
